@@ -1,38 +1,23 @@
-name: MovieFlix Data Extraction
+name: MovieFlix CI/CD
 
 on:
-#  schedule:
-#    - cron:'0 0 * * 0' # Roda todo domingo à meia-noite
-  workflow_dispatch:      # Permite rodar manualmente pelo botão no GitHub
+  workflow_dispatch:
 
 jobs:
-   build:
-     runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-     steps:
-       - name: Checkout do código
-         uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-       - name: Configurar Python
-         uses: actions/setup-python@v4
-         with:
-           python-version: '3.10'
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USER }}/movieflix:latest .
 
-       - name: Instalar dependências
-         run: |
-           pip install -r extract/requirements.txt
+      - name: Run container (teste)
+        run: docker run -d -p 8000:8000 ${{ secrets.DOCKER_USER }}/movieflix
 
-       - name: Executar Script de Extração
-         env:
-           # Usaremos um "Secret" para proteger sua chave da API
-           OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
-         run: python extract/extract_pipeline.py
+      - name: Login Docker Hub
+        run: echo ${{ secrets.DOCKER_PASS }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
 
-       - name: Salvar CSVs como Artefatos
-         uses: actions/upload-artifact@v4
-         with:
-           name: movieflix-data
-           path: |
-             movies.csv
-             users.csv
-             ratings.csv
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USER }}/movieflix:latest
