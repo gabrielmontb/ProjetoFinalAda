@@ -68,7 +68,7 @@ def generate_mock_data(movie_df):
     users = pd.DataFrame({
         'user_id': range(1, 21),
         'name': [f'Usuario_{i}' for i in range(1, 21)],
-        'email': [f'user{i}@movieflix.com' for i in range(1, 21)]
+        'email': [f'user{i}@movieflix.com' for i in range(1, 21)],
         'country': [random.choice(countries) for _ in range(20)]
     })
     ratings_list = []
