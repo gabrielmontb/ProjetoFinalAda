@@ -63,11 +63,13 @@ def fetch_movies_by_genre(keywords, target_genres, limit_per_genre=10):
 
 # Funções de Users e Ratings permanecem as mesmas da resposta anterior
 def generate_mock_data(movie_df):
+    countries = ['Brasil', 'EUA', 'Canadá', 'França']
     if movie_df.empty: return pd.DataFrame(), pd.DataFrame()
     users = pd.DataFrame({
         'user_id': range(1, 21),
         'name': [f'Usuario_{i}' for i in range(1, 21)],
         'email': [f'user{i}@movieflix.com' for i in range(1, 21)]
+        'country': [random.choice(countries) for _ in range(20)]
     })
     ratings_list = []
     for u_id in users['user_id']:
